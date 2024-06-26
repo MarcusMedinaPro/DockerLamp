@@ -3,14 +3,19 @@ setlocal
 
 if "%1"=="help" goto :help
 if "%1"=="" goto :usage
-if "%6"=="" goto :usage
+if "%5"=="" goto :usage
 
 set WEB_PORT=%1
 set MYSQL_DATABASE=%2
 set MYSQL_USER=%3
 set MYSQL_ROOT_PASSWORD=%4
 set MYSQL_PASSWORD=%5
-set PHPMYADMIN_PORT=%6
+
+if "%6"=="" (
+    set /a PHPMYADMIN_PORT=%WEB_PORT% + 1
+) else (
+    set PHPMYADMIN_PORT=%6
+)
 
 rem Delete existing files
 if exist docker-compose.yml del docker-compose.yml
@@ -89,7 +94,8 @@ echo You can now use build.cmd to start building the docker image
 goto :eof
 
 :usage
-echo Usage: setup [WEB_PORT] [MYSQL_DATABASE] [MYSQL_USER] [MYSQL_ROOT_PASSWORD] [MYSQL_PASSWORD] [PHPMYADMIN_PORT]
+echo Usage: setup [WEB_PORT] [MYSQL_DATABASE] [MYSQL_USER] [MYSQL_ROOT_PASSWORD] [MYSQL_PASSWORD] [PHPMYADMIN_PORT (optional)]
+echo if PHPMYADMIN_PORT is not provided, it will be set to WEB_PORT + 1
 goto :eof
 
 :help
@@ -125,3 +131,4 @@ rem Add generated files to .gitignore (if they don't already exist)
 )
 
 goto :eof
+echo "Done!"

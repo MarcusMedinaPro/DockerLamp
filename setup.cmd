@@ -58,8 +58,8 @@ echo Creating build.cmd...
 (
 echo @echo off
 echo docker-compose build
+echo echo You can now use run.cmd to start using the docker image
 echo.
-echo You can now use run.cmd to start using the docker image
 ) > build.cmd
 
 echo Creating run.cmd...
@@ -83,6 +83,8 @@ echo MySQL User: %MYSQL_USER%
 echo MySQL Root Password: %MYSQL_ROOT_PASSWORD%
 echo MySQL Password: %MYSQL_PASSWORD%
 echo phpMyAdmin Port: %PHPMYADMIN_PORT%
+echo.
+echo You can now use build.cmd to start building the docker image
 
 goto :eof
 
@@ -107,12 +109,19 @@ echo MySQL Root Password: %MYSQL_ROOT_PASSWORD%
 echo MySQL Password: %MYSQL_PASSWORD%
 echo phpMyAdmin Port: %PHPMYADMIN_PORT%
 echo.
-echo You can now use build.cmd to start building the docker image
+echo use run.cmd to start using the docker image
+echo use stop.cmd to stop the docker image
+echo use cleanupDocker.cmd to remove the docker image
 
-rem Add genereated files to .gitignore (if they don't already exist)
-if not exist .gitignore echo docker-compose.yml> .gitignore
-if not exist .gitignore echo build.cmd>> .gitignore
-if not exist .gitignore echo run.cmd>> .gitignore
-if not exist .gitignore echo stop.cmd>> .gitignore
+rem Ensure .gitignore file exists
+if not exist .gitignore type nul > .gitignore
+
+rem Add generated files to .gitignore (if they don't already exist)
+(
+    findstr /c:"docker-compose.yml" .gitignore >nul || echo docker-compose.yml>> .gitignore
+    findstr /c:"build.cmd" .gitignore >nul || echo build.cmd>> .gitignore
+    findstr /c:"run.cmd" .gitignore >nul || echo run.cmd>> .gitignore
+    findstr /c:"stop.cmd" .gitignore >nul || echo stop.cmd>> .gitignore
+)
 
 goto :eof

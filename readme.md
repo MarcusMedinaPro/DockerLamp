@@ -143,6 +143,16 @@ volumes:
 - **Convenient:** Includes scripts for building, running, stopping, and cleaning up your Docker environment.
 - **Versatile:** Perfect for PHP hobby projects and experimenting with web development.
 
+## Feedback
+
+If you have any feedback or suggestions, send a message through Github or create an issue or a pull-request. 
+
+I'd love to hear from you!
+
+## Contributing
+
+If you'd like to contribute to this project, feel free to fork the repository and submit a pull request. I'd be happy to review and merge your changes.
+
 ## License
 
 This project is licensed under the MIT License.

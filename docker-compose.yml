@@ -1,0 +1,32 @@
+services:
+  web:
+    build: .
+    ports:
+      - "8192:80"
+    volumes:
+      - ./public:/var/www/html
+    environment:
+      MYSQL_ROOT_PASSWORD: root2toot
+      MYSQL_DATABASE: rssFeeds
+      MYSQL_USER: Marcus
+      MYSQL_PASSWORD: kattskit
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root2toot
+      MYSQL_DATABASE: rssFeeds
+      MYSQL_USER: Marcus
+      MYSQL_PASSWORD: kattskit
+    volumes:
+      - db_data:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin:latest
+    restart: always
+    ports:
+      - "8193:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: root2toot
+volumes:
+  db_data:

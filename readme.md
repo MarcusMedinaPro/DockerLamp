@@ -42,15 +42,23 @@ Example:
 setup 8080 myDatabase dbUser rootPassword userPassword 8081
 ```
 
-### 3. Build and Run the Docker Containers
+### 3. Build the Docker Containers
 
-Use the `build.cmd` script to build and start the Docker containers:
+Use the `build.cmd` script to build the Docker containers:
 
 ```sh
 build
 ```
 
-### 4. Access Your Services
+### 4. Run the Docker Containers
+
+Use the `run.cmd` script to start the Docker containers:
+
+```sh
+run
+```
+
+### 5. Access Your Services
 
 Once everything is up and running, you can access the services at the following URLs:
 

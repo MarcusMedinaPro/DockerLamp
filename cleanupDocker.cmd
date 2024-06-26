@@ -1,0 +1,23 @@
+@echo off
+echo Stopping all running containers...
+docker-compose down
+
+echo Removing unused Docker volumes...
+docker volume prune -f
+
+echo Removing unused Docker networks...
+docker network prune -f
+
+echo Removing unused Docker images...
+docker image prune -f
+
+echo Removing all Docker images...
+for /f "tokens=*" %%i in ('docker images -q') do docker rmi -f %%i
+
+echo Removing unused Docker build cache...
+docker builder prune -f
+
+echo Removing unused Docker system resources...
+docker system prune -f
+
+echo Cleanup complete!

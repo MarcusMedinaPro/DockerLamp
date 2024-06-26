@@ -24,8 +24,8 @@ Before we get started, make sure you have the following installed:
 First, clone the repository to your local machine:
 
 ```sh
-git clone https://github.com/MarcusMedina/docker-lamp-stack.git
-cd docker-lamp-stack
+git clone https://github.com/MarcusMedinaPro/DockerLamp.git
+cd DockerLamp
 ```
 
 ### 2. Run the Setup Script
@@ -39,7 +39,7 @@ setup [WEB_PORT] [MYSQL_DATABASE] [MYSQL_USER] [MYSQL_ROOT_PASSWORD] [MYSQL_PASS
 Example:
 
 ```sh
-setup 8080 mydatabase myuser rootpassword userpassword 8081
+setup 8080 myDatabase dbUser rootPassword userPassword 8081
 ```
 
 ### 3. Build and Run the Docker Containers
@@ -86,8 +86,6 @@ This one is not created by the setup script. Cleans up Docker resources includin
 Here's a sneak peek at the `docker-compose.yml` that gets generated:
 
 ```yaml
-version: '3.9'
-
 services:
   web:
     image: php:8.2-apache

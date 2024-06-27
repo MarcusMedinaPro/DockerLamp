@@ -1,5 +1,6 @@
-docker-compose.yml
 build.cmd
-run.cmd
+cleanupDocker.cmd
+initialrun.cmd
 stop.cmd
-.env
+test.cmd
+docker-compose.yml

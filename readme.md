@@ -42,23 +42,15 @@ Example:
 setup 8080 myDatabase dbUser rootPassword userPassword 8081
 ```
 
-### 3. Build the Docker Containers
+### 3. Build and Run the Docker Containers
 
-Use the `build.cmd` script to build the Docker containers:
+Use the `build.cmd` script to build and start the Docker containers:
 
 ```sh
 build
 ```
 
-### 4. Run the Docker Containers
-
-Use the `run.cmd` script to start the Docker containers:
-
-```sh
-run
-```
-
-### 5. Access Your Services
+### 4. Access Your Services
 
 Once everything is up and running, you can access the services at the following URLs:
 
@@ -73,6 +65,22 @@ To make your life easier, I've included a few scripts:
 
 This script generates the `docker-compose.yml` file and other command scripts based on your inputs.
 
+#### Command Line Arguments
+
+- **WEB_PORT:** The port number for the web server.
+- **MYSQL_DATABASE:** The name of the MySQL database.
+- **MYSQL_USER:** The MySQL user name.
+- **MYSQL_ROOT_PASSWORD:** The MySQL root password.
+- **MYSQL_PASSWORD:** The MySQL user password.
+- **PHPMYADMIN_PORT:** The port number for phpMyAdmin.
+
+#### Other commands
+
+- **help:** Displays the help message.
+- **version:** Displays the version of the setup script.
+- **clean:** Removes the generated files and the Docker containers.
+- **default:** Generates files and command scripts with default settings
+
 ### `build.cmd`
 
 Builds and starts the Docker containers.
@@ -84,6 +92,10 @@ Starts the Docker containers if they are already built.
 ### `stop.cmd`
 
 Stops the running Docker containers.
+
+### `test.cmd`
+
+Runs the test script to check if the Docker containers are running and accessible.
 
 ### `cleanupDocker.cmd`
 

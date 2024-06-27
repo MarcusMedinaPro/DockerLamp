@@ -1,39 +1,31 @@
-# Dockerfile
-FROM php:8.2-apache
+# Use the official PHP image with Apache
+FROM php:8.2.20-apache
 
-# Install necessary PHP extensions
+# Install necessary packages and PHP extensions
 RUN apt-get update && apt-get install -y \
-    libfreetype6-dev \
-    libjpeg62-turbo-dev \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libzip-dev \
-    libicu-dev \
-    libonig-dev \
-    libxml2-dev \
-    libssl-dev \
-    libcurl4-openssl-dev \
-    libsqlite3-dev \
+    zip \
+    unzip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install -j$(nproc) mysqli \
-    && docker-php-ext-install -j$(nproc) pdo pdo_mysql pdo_sqlite \
-    && docker-php-ext-install -j$(nproc) zip \
-    && docker-php-ext-install -j$(nproc) intl \
-    && docker-php-ext-install -j$(nproc) mbstring \
-    && docker-php-ext-install -j$(nproc) exif \
-    && docker-php-ext-install -j$(nproc) soap \
-    && docker-php-ext-install -j$(nproc) bcmath \
-    && docker-php-ext-install -j$(nproc) xml \
-    && docker-php-ext-enable opcache
+    && docker-php-ext-install gd \
+    && docker-php-ext-install zip \
+    && docker-php-ext-install mysqli pdo pdo_mysql \
+    && a2enmod rewrite
 
-# Enable mod_rewrite
-RUN a2enmod rewrite
-
-# Copy the current directory contents into the container
-COPY . /var/www/html
+# Install Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Configure Apache
-RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
+# Copy application files
+COPY public/ /var/www/html/
+
+# Install PHPUnit
+RUN composer require --dev phpunit/phpunit
+
+# Expose port 80
+EXPOSE 80

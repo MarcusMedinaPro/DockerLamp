@@ -1,4 +1,4 @@
-# Docker LAMP Stack on Windows
+# Docker LAMP Stack
 
 Welcome to my Docker LAMP stack setup! 🎉
 
@@ -6,34 +6,42 @@ As a .NET and Java teacher, I have a deep love for programming, but my heart alw
 
 ## Why This Project?
 
-Even though my day job involves teaching .NET and Java, I often find myself tinkering with PHP in my spare time. It's like a guilty pleasure that I just can't resist! To streamline my development process and make it easier to jump into coding, I decided to set up a Dockerized LAMP stack. This setup allows me to quickly spin up a development environment on my Windows machine and dive right into coding without any hassle.
+Even though my day job involves teaching .NET and Java, I often find myself tinkering with PHP in my spare time. It's like a guilty pleasure that I just can't resist! To streamline my development process and make it easier to jump into coding, I decided to set up a Dockerized LAMP stack. This setup allows me to quickly spin up a development environment and dive right into coding without any hassle — on Windows, macOS, or Linux.
 
-I hope this setup makes your PHP development as enjoyable and productive as it has made mine. 
+I hope this setup makes your PHP development as enjoyable and productive as it has made mine.
 
 ## Prerequisites
 
 Before we get started, make sure you have the following installed:
 
-- Docker Desktop for Windows
-- Docker Compose
+- Docker Desktop (or Docker Engine on Linux)
+- Docker Compose v2 (bundled with Docker Desktop and recent Docker Engine installs; the `docker compose` command, not the older `docker-compose`)
 
 ## Getting Started
 
 ### 1. Clone the Repository
-
-First, clone the repository to your local machine:
 
 ```sh
 git clone https://github.com/MarcusMedinaPro/DockerLamp.git
 cd DockerLamp
 ```
 
-### 2. Run the Setup Script
+### 2. Create your `.env`
 
-The `setup.cmd` script will guide you through creating a `docker-compose.yml` file and other necessary scripts. You'll need to provide some information like ports, database name, and user credentials.
+Either copy the template by hand:
 
 ```sh
+cp .env-example .env
+```
+
+...or use the setup script for your platform, which fills in ports/credentials for you:
+
+```sh
+# Windows
 setup [WEB_PORT] [MYSQL_DATABASE] [MYSQL_USER] [MYSQL_ROOT_PASSWORD] [MYSQL_PASSWORD] [PHPMYADMIN_PORT]
+
+# Linux / macOS
+./setup.sh [WEB_PORT] [MYSQL_DATABASE] [MYSQL_USER] [MYSQL_ROOT_PASSWORD] [MYSQL_PASSWORD] [PHPMYADMIN_PORT]
 ```
 
 Example:
@@ -42,12 +50,17 @@ Example:
 setup 8080 myDatabase dbUser rootPassword userPassword 8081
 ```
 
+`docker-compose.yml` and the Dockerfile are static and committed — the setup
+script only ever writes `.env`, it never touches them.
+
 ### 3. Build and Run the Docker Containers
 
-Use the `build.cmd` script to build and start the Docker containers:
-
 ```sh
+# Windows
 build
+
+# Linux / macOS
+./build.sh
 ```
 
 ### 4. Access Your Services
@@ -59,11 +72,12 @@ Once everything is up and running, you can access the services at the following 
 
 ## Scripts
 
-To make your life easier, I've included a few scripts:
+Every script comes in a `.cmd` (Windows) and `.sh` (Linux/macOS) flavor with
+identical behavior.
 
-### `setup.cmd`
+### `setup` / `setup.sh`
 
-This script generates the `docker-compose.yml` file and other command scripts based on your inputs.
+Writes `.env` based on your inputs (or `default` / `marcus` presets).
 
 #### Command Line Arguments
 
@@ -76,96 +90,61 @@ This script generates the `docker-compose.yml` file and other command scripts ba
 
 #### Other commands
 
-- **help:** Displays the help message.
-- **version:** Displays the version of the setup script.
-- **clean:** Removes the generated files and the Docker containers.
-- **default:** Generates files and command scripts with default settings
+- **help:** Displays the help message (reads current values from `.env`).
+- **version:** Displays script and Docker version info.
+- **cleanup:** Removes `.env` and Docker resources for this project.
+- **default:** Generates `.env` with default settings.
 
-### `build.cmd`
+### `build` / `build.sh`
 
-Builds and starts the Docker containers.
+Builds the Docker images.
 
-### `run.cmd`
+### `run` / `run.sh`
 
-Starts the Docker containers if they are already built.
+Starts the containers (detached).
 
-### `stop.cmd`
+### `stop` / `stop.sh`
 
-Stops the running Docker containers.
+Stops the running containers.
 
-### `test.cmd`
+### `test` / `test.sh`
 
-Runs the test script to check if the Docker containers are running and accessible.
+Runs the PHPUnit test suite in a disposable container.
 
-### `cleanupDocker.cmd`
+### `cleanupDocker` / `cleanupDocker.sh`
 
-This one is not created by the setup script. Cleans up Docker resources including stopping all running containers, removing unused volumes, networks, images, build cache, and system resources.
+Stops containers and prunes unused Docker volumes, networks, images, and
+build cache.
 
-## Docker Compose Configuration
+### `initialrun` / `initialrun.sh`
 
-Here's a sneak peek at the `docker-compose.yml` that gets generated:
+Builds and starts the containers in one step.
 
-```yaml
-services:
-  web:
-    image: php:8.2-apache
-    container_name: ${COMPOSE_PROJECT_NAME}-web
-    volumes:
-      - ./src:/var/www/html
-    ports:
-      - "${WEB_PORT}:80"
-    working_dir: /var/www/html
-    networks:
-      - ${COMPOSE_PROJECT_NAME}_network
+## Stack Versions
 
-  db:
-    image: mysql:latest
-    container_name: ${COMPOSE_PROJECT_NAME}-db
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    ports:
-      - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
-    networks:
-      - ${COMPOSE_PROJECT_NAME}_network
+Image versions are pinned directly in `Dockerfile` and `docker-compose.yml`
+(currently PHP 8.4, MySQL 8.4 LTS, phpMyAdmin 5.2). Dependabot watches both
+files and opens PRs when newer versions are available — see
+[CHANGELOG.md](CHANGELOG.md) for the version history.
 
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: ${COMPOSE_PROJECT_NAME}-phpmyadmin
-    environment:
-      PMA_HOST: db
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-    restart: always
-    ports:
-      - "${PHPMYADMIN_PORT}:80"
-    depends_on:
-      - db
-    networks:
-      - ${COMPOSE_PROJECT_NAME}_network
+## Data Persistence
 
-networks:
-  ${COMPOSE_PROJECT_NAME}_network:
-    driver: bridge
-
-volumes:
-  db_data:
-```
+MySQL data lives in the named Docker volume `db_data`, so your database
+survives `stop`/`run` cycles. Composer's `vendor/` directory lives in its own
+named volume (`vendor_data`) rather than being bind-mounted from the host, so
+packages installed at build time aren't wiped out at runtime.
 
 ## Why You'll Love This Setup
 
 - **Quick Start:** Get your LAMP stack up and running in minutes.
-- **Customizable:** Easily change ports and credentials to fit your needs.
-- **Convenient:** Includes scripts for building, running, stopping, and cleaning up your Docker environment.
+- **Cross-Platform:** Works the same way on Windows, macOS, and Linux.
+- **Customizable:** Easily change ports and credentials via `.env`.
+- **Convenient:** Includes scripts for building, running, stopping, testing, and cleaning up your Docker environment.
 - **Versatile:** Perfect for PHP hobby projects and experimenting with web development.
 
 ## Feedback
 
-If you have any feedback or suggestions, send a message through Github or create an issue or a pull-request. 
+If you have any feedback or suggestions, send a message through Github or create an issue or a pull-request.
 
 I'd love to hear from you!
 

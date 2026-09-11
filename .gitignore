@@ -1,6 +1,2 @@
-build.cmd
-cleanupDocker.cmd
-initialrun.cmd
-stop.cmd
-test.cmd
-docker-compose.yml
+.env
+vendor/
